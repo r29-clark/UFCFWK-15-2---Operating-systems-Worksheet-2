@@ -1,15 +1,21 @@
 AS = nasm
+CC = gcc
 LD = ld
 GENISOIMAGE = genisoimage
 QEMU = qemu-system-i386
+
+CFLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -Wall -Wextra
 
 all: os.iso
 
 source/loader.o: source/loader.asm
 	$(AS) -f elf source/loader.asm -o source/loader.o
 
-kernel.elf: source/loader.o source/link.ld
-	$(LD) -T source/link.ld -melf_i386 source/loader.o -o kernel.elf
+source/kernel.o: source/kernel.c
+	$(CC) $(CFLAGS) -c source/kernel.c -o source/kernel.o
+
+kernel.elf: source/loader.o source/kernel.o source/link.ld
+	$(LD) -T source/link.ld -melf_i386 source/loader.o source/kernel.o -o kernel.elf
 
 iso/boot/grub/stage2_eltorito:
 	cp /opt/os/stage2_eltorito iso/boot/grub/stage2_eltorito
@@ -24,6 +30,6 @@ run: os.iso
 	$(QEMU) -nographic -boot d -cdrom os.iso -m 32 -d cpu -D logQ.txt
 
 clean:
-	rm -f source/loader.o kernel.elf iso/boot/kernel.elf os.iso logQ.txt
+	rm -f source/loader.o source/kernel.o kernel.elf iso/boot/kernel.elf os.iso logQ.txt
 
 .PHONY: all run clean
