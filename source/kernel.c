@@ -1,14 +1,13 @@
-int sum_of_three(int a, int b, int c)
-{
-    return a + b + c;
-}
+#include "../drivers/framebuffer.h"
 
-int multiply_two(int a, int b)
+void kernel_main()
 {
-    return a * b;
-}
+    fb_clear();
 
-int subtract_two(int a, int b)
-{
-    return a - b;
+    fb_set_colour(15, 0);
+    fb_write("Hello from the framebuffer!");
+
+    fb_move(0, 2);
+    fb_set_colour(14, 0);
+    fb_write("Framebuffer driver is working!");
 }
