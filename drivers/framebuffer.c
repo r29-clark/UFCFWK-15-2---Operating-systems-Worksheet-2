@@ -78,3 +78,39 @@ void fb_write(char *buf)
         i++;
     }
 }
+void fb_write_number(int number)
+{
+    char buffer[12];
+    int i = 0;
+    unsigned int value;
+
+    if (number < 0)
+    {
+        fb_write("-");
+        value = (unsigned int)(-number);
+    }
+    else
+    {
+        value = (unsigned int)number;
+    }
+
+    if (value == 0)
+    {
+        fb_write("0");
+        return;
+    }
+
+    while (value > 0)
+    {
+        buffer[i++] = '0' + (value % 10);
+        value /= 10;
+    }
+
+    while (i > 0)
+    {
+        char digit[2];
+        digit[0] = buffer[--i];
+        digit[1] = '\0';
+        fb_write(digit);
+    }
+}

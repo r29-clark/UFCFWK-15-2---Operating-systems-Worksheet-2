@@ -31,7 +31,7 @@ os.iso: kernel.elf iso/boot/kernel.elf iso/boot/grub/stage2_eltorito iso/boot/gr
 	$(GENISOIMAGE) -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -A os -input-charset utf8 -quiet -boot-info-table -o os.iso iso
 
 run: os.iso
-	$(QEMU) -nographic -boot d -cdrom os.iso -m 32 -d cpu -D logQ.txt
+	$(QEMU) -display curses -monitor telnet::45454,server,nowait -serial mon:stdio -boot d -cdrom os.iso -m 32
 
 clean:
 	rm -f source/loader.o source/kernel.o drivers/framebuffer.o kernel.elf iso/boot/kernel.elf os.iso logQ.txt
