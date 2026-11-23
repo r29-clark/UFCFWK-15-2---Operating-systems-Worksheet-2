@@ -1,23 +1,21 @@
 #include "../drivers/framebuffer.h"
+#include "../drivers/interrupts.h"
+#include "../drivers/hardware_interrupt_enabler.h"
 
-void kernel_main()
+void kernel_main(void)
 {
     fb_clear();
-
     fb_set_colour(15, 0);
-    fb_write("Hello from the framebuffer!");
 
-    fb_move(0, 2);
-    fb_set_colour(14, 0);
-    fb_write("Framebuffer driver is working!");
+    fb_write("MyOS - Keyboard Test");
+    fb_newline();
+    fb_write("Type something:");
+    fb_newline();
 
-    fb_move(0, 4);
-    fb_set_colour(10, 0);
-    fb_write("Number test: ");
-    fb_write_number(12345);
+    interrupts_install_idt();
+    enable_hardware_interrupts();
 
-    fb_move(0, 5);
-    fb_set_colour(12, 0);
-    fb_write("Negative number test: ");
-    fb_write_number(-123);
+    while (1) {
+        __asm__ volatile ("hlt");
+    }
 }

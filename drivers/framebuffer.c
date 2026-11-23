@@ -114,3 +114,22 @@ void fb_write_number(int number)
         fb_write(digit);
     }
 }
+void fb_write_char(char c)
+{
+    char text[2] = {c, '\0'};
+    fb_write(text);
+}
+
+void fb_newline(void)
+{
+    fb_move(0, cursor_y + 1);
+}
+
+void fb_backspace(void)
+{
+    if (cursor_x > 0) {
+        fb_move(cursor_x - 1, cursor_y);
+        fb_write(" ");
+        fb_move(cursor_x - 1, cursor_y);
+    }
+}

@@ -353,3 +353,34 @@ A second terminal was used to connect to the monitor using localhost 45454.
 
 ![alt text](screenshots/telnet-connection.png)
 ![alt text](screenshots/framebuffer-evidence.png)
+
+Worksheet 2 Part 2 - inputting and interupts
+
+Task 1: - Display keyboard inputs
+
+Objective:
+
+The objective of this task was to add on to the existing operating system be allowing keyboard inputs using hardware interrupts. Once this task had been completed the operating system should be able to display characters, use backspaces and move to a new line.
+
+Implementations:
+
+I created a io.asm and io.h file to allow the operating system to talk to the hardware through I/O ports, the inb function reads a byte from a port and the outb writes a byte to the port.
+
+I then created a pic.c and .h file to configure a interrupt controller. The PIC remap function rempas the interrupts and pic_acknowledge tells the PIC when an interrupt has been handled.
+
+I created the interrupt handling files to set up the interrupt descriptor table which allows the operating system to respond to the hardware interrupts, the keyboard input uses interrupt 33.
+
+I also created a keybaord.c and keybaord.h to read keyboard scan codes and convert them, into ASCII.
+
+I also updated the framebuffer driver to support displaying individual charcater, remove characters and move to a new line.
+
+Finally I updated the kernel.c to initialise the interrupt system and enable hardware interrupts. The makefule was also updated to compile the new files.
+
+Testing:
+
+I used the following commands to build the system:
+![alt text](screenshots/part2-task1-build.png)
+I then ran the system and tested the keyboard inputs:
+![alt text](screenshots/part2-task1-keyboard.png)
+
+Result: the operating system successfully recieved keyboard inputs through the interrupts and displayed the characters using the driver, backspace and enter were also tested and worked successfully.

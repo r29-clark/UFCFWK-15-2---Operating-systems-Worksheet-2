@@ -1,4 +1,3 @@
-
 AS = nasm
 CC = gcc
 LD = ld
@@ -7,19 +6,27 @@ QEMU = qemu-system-i386
 
 CFLAGS = -m32 -ffreestanding -fno-pie -fno-stack-protector -nostdlib -Wall -Wextra
 
+OBJECTS = source/loader.o \
+          source/kernel.o \
+          source/io.o \
+          drivers/framebuffer.o \
+          drivers/pic.o \
+          drivers/interrupts.o \
+          drivers/keyboard.o \
+          drivers/interrupt_handlers.o \
+          drivers/interrupt_asm.o \
+          drivers/hardware_interrupt_enabler.o
+
 all: os.iso
 
-source/loader.o: source/loader.asm
-	$(AS) -f elf source/loader.asm -o source/loader.o
+%.o: %.asm
+	$(AS) -f elf $< -o $@
 
-source/kernel.o: source/kernel.c
-	$(CC) $(CFLAGS) -c source/kernel.c -o source/kernel.o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-drivers/framebuffer.o: drivers/framebuffer.c drivers/framebuffer.h
-	$(CC) $(CFLAGS) -c drivers/framebuffer.c -o drivers/framebuffer.o
-
-kernel.elf: source/loader.o source/kernel.o drivers/framebuffer.o source/link.ld
-	$(LD) -T source/link.ld -melf_i386 source/loader.o source/kernel.o drivers/framebuffer.o -o kernel.elf
+kernel.elf: $(OBJECTS) source/link.ld
+	$(LD) -T source/link.ld -melf_i386 $(OBJECTS) -o kernel.elf
 
 iso/boot/grub/stage2_eltorito:
 	cp /opt/os/stage2_eltorito iso/boot/grub/stage2_eltorito
@@ -31,9 +38,9 @@ os.iso: kernel.elf iso/boot/kernel.elf iso/boot/grub/stage2_eltorito iso/boot/gr
 	$(GENISOIMAGE) -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -A os -input-charset utf8 -quiet -boot-info-table -o os.iso iso
 
 run: os.iso
-	$(QEMU) -display curses -monitor telnet::45454,server,nowait -serial mon:stdio -boot d -cdrom os.iso -m 32
+	$(QEMU) -display curses -monitor none -serial none -boot d -cdrom os.iso -m 32
 
 clean:
-	rm -f source/loader.o source/kernel.o drivers/framebuffer.o kernel.elf iso/boot/kernel.elf os.iso logQ.txt
+	rm -f $(OBJECTS) kernel.elf iso/boot/kernel.elf os.iso logQ.txt
 
 .PHONY: all run clean
