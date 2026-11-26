@@ -13,6 +13,8 @@ OBJECTS = source/loader.o \
           drivers/pic.o \
           drivers/interrupts.o \
           drivers/keyboard.o \
+          drivers/input.o \
+          drivers/terminal.o \
           drivers/interrupt_handlers.o \
           drivers/interrupt_asm.o \
           drivers/hardware_interrupt_enabler.o

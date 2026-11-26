@@ -384,3 +384,65 @@ I then ran the system and tested the keyboard inputs:
 ![alt text](screenshots/part2-task1-keyboard.png)
 
 Result: the operating system successfully recieved keyboard inputs through the interrupts and displayed the characters using the driver, backspace and enter were also tested and worked successfully.
+
+Task 2 - Input Buffer API
+
+Objective:
+
+The objective of this task was to create an input buffer that allows the operating system to retrieve and store keyboard input, the system reads individual characters and completes lines of text.
+
+Implementation:
+
+I used a buffer in interrupts.c to store the characters from the keyboard, the buffer has a maximum size of 256 bytes.
+
+The getc() function retrieves a character from the buffer and then removes it, if the buffer is empty the function returnd -1.
+
+I then created input.c and input.h to implement the function readline() which uses getc() to get characters until the enter key is pressed.
+
+The readline() functiono stores the characters in the buffer, it also handles backspace by removing the previous character from the input and checks the buffer size to prevent writing outside of the allocated memory.
+
+I also updated the kernel.c to test the input functions by allowing the user ot enter text and then repeating the text on the screen.
+
+I also updated the Makefule to compile the new input files.
+
+I then ran the operating system using make run and tested tghe input buffer by entering different characters, I tested hello world and 123, the operating system displayed the entered text back correctly.
+
+![alt text](screenshots/part2-task2-inputs.png)
+![alt text](screenshots/part2-task2-build.png)
+
+The operating system successfully stored and retrieved keyboard characters using the input buffer. 
+
+Task 3:
+
+Objective:
+
+The objective of this task was to create a basic terminal for the operating system that allows users to enter commands similar to a basic unix system.
+
+Implementation:
+
+I created two new files called terminal.c and terminal.h inside the drivers folder, the terminal.h file contains the declration for the terminal_run() function while terminal.c has the code for running the temrinal and processing the different commands.
+
+The terminal_run() function displays a welcome message and allows the user to enter commands, it also uses readline() from task 2 to recieve keyboard inputs.
+
+I created the process_command function to seperate the command name from its arguments, the function then compares the entered command against the ones stored in the command table.
+
+The four commands I implemented were:
+
+1. Help - Displays the list of available commands
+2. Echo - Displays the text entered after the command
+3. Clear - Clears the screen
+4. Version - Displays the current operating system version
+
+The command table uses a structure to store the names and function pointers. 
+
+If the user enters a command that doesnt exist then the terminal will display an unknown command message.
+
+I updated kernel.c to call terminal_run()
+after initialising the interrupt system.
+
+![alt text](screenshots/part2-task3-command-testing.png)
+![alt text](screenshots/task3-build.png)
+
+Result:
+
+The terminal started and displayed the commands correctly, the terminal was able to receive keyboard input and process commands, the command table allows additional commands to be added to the operating system without changing the main temrinal loop.
